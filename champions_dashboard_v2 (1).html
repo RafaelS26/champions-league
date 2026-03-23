@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UEFA Champions League — Artilheiros Históricos</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;700;800;900&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --blue-deep:   #050d1f;
+  --blue-dark:   #071530;
+  --blue-mid:    #0a2060;
+  --blue-elec:   #0f4fff;
+  --blue-sky:    #1a8fff;
+  --cyan:        #00d4ff;
+  --purple:      #6a0aff;
+  --magenta:     #c41aff;
+  --white:       #ffffff;
+  --white-soft:  #e8f0ff;
+  --silver:      #98aacc;
+  --gold:        #ffd700;
+  --glow-blue:   rgba(0,212,255,0.35);
+  --glow-purple: rgba(106,10,255,0.4);
+  --glow-mag:    rgba(196,26,255,0.3);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--blue-deep);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* =====================
+   INTRO
+   ===================== */
+#intro {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 60%, #0a2060 0%, #05081a 55%, #000 100%);
+}
+
+/* Nebula layers */
+.nebula {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.nebula::before {
+  content:'';
+  position: absolute;
+  width: 900px; height: 900px;
+  left: 50%; top: 50%;
+  transform: translate(-50%,-55%);
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(106,10,255,0.55) 0%,
+    rgba(15,79,255,0.35) 30%,
+    rgba(0,212,255,0.15) 55%,
+    transparent 75%
+  );
+  animation: nebulaPulse 4s ease-in-out infinite alternate;
+}
+.nebula::after {
+  content:'';
+  position: absolute;
+  width: 600px; height: 400px;
+  left: 50%; top: 50%;
+  transform: translate(-50%,-40%);
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(196,26,255,0.4) 0%,
+    transparent 70%
+  );
+  animation: nebulaPulse 3s ease-in-out 1s infinite alternate-reverse;
+}
+@keyframes nebulaPulse {
+  from { opacity: 0.7; transform: translate(-50%,-55%) scale(1); }
+  to   { opacity: 1;   transform: translate(-50%,-55%) scale(1.08); }
+}
+
+/* Star particles */
+.stars { position: absolute; inset: 0; }
+.star-p {
+  position: absolute; border-radius: 50%;
+  background: #fff;
+  animation: starTwink var(--d,3s) infinite var(--dl,0s);
+}
+@keyframes starTwink {
+  0%,100% { opacity:0.15; }
+  50%      { opacity:1; }
+}
+
+/* UCL Ball */
+.intro-ball-wrap {
+  position: relative; z-index: 2;
+  width: 260px; height: 260px;
+  animation: ballDrop 1.1s cubic-bezier(0.22,1,0.36,1) 0.6s both;
+}
+@keyframes ballDrop {
+  from { opacity:0; transform: translateY(-60px) scale(0.6); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+
+.ball-glow-ring {
+  position: absolute; inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(0,212,255,0.25) 0%,
+    rgba(106,10,255,0.2) 40%,
+    transparent 70%
+  );
+  animation: ringPulse 2.5s ease-in-out infinite;
+}
+@keyframes ringPulse {
+  0%,100% { transform: scale(1); opacity:0.7; }
+  50%      { transform: scale(1.15); opacity:1; }
+}
+
+.ball-svg { width:100%; height:100%; filter: drop-shadow(0 0 30px rgba(0,212,255,0.8)) drop-shadow(0 0 60px rgba(106,10,255,0.6)); animation: ballFloat 3s ease-in-out infinite; }
+@keyframes ballFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+/* Trophy */
+.intro-trophy {
+  position: relative; z-index: 2;
+  margin-top: -10px;
+  animation: trophyRise 1s ease-out 1.4s both;
+}
+@keyframes trophyRise {
+  from { opacity:0; transform: translateY(40px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.trophy-svg {
+  width: 90px;
+  filter: drop-shadow(0 0 20px rgba(255,255,255,0.9)) drop-shadow(0 0 40px rgba(196,26,255,0.7));
+}
+
+/* Text block */
+.intro-text {
+  text-align: center; z-index: 2; margin-top: 10px;
+  animation: textReveal 0.8s ease-out 2s both;
+}
+@keyframes textReveal {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.intro-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.6rem; letter-spacing: 9px;
+  color: var(--cyan); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.intro-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.5rem, 9vw, 6.5rem);
+  letter-spacing: 6px; line-height: 0.85;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(0,212,255,0.8), 0 0 80px rgba(106,10,255,0.5);
+  animation: titleGlow 2s ease-in-out 2.5s infinite alternate;
+}
+@keyframes titleGlow {
+  from { text-shadow: 0 0 40px rgba(0,212,255,0.8), 0 0 80px rgba(106,10,255,0.5); }
+  to   { text-shadow: 0 0 60px rgba(0,212,255,1),   0 0 120px rgba(196,26,255,0.7); }
+}
+.intro-subtitle {
+  font-size: 0.75rem; letter-spacing: 8px;
+  color: var(--white-soft); opacity: 0.75;
+  margin-top: 6px;
+}
+.intro-years-str {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.55rem; letter-spacing: 3px;
+  color: var(--cyan); opacity: 0.6;
+  margin-top: 10px;
+}
+
+/* divider line */
+.intro-line {
+  width: 0; height: 1px; margin: 14px auto;
+  background: linear-gradient(to right, transparent, var(--cyan), var(--purple), transparent);
+  animation: lineGrow 0.8s ease-out 2.6s both;
+}
+@keyframes lineGrow {
+  to { width: 280px; }
+}
+
+/* loading dots */
+.intro-dots {
+  display: flex; gap: 8px; justify-content: center;
+  animation: fadeIn 0.5s 3.1s both;
+  margin-top: 16px;
+}
+.idot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+  animation: dotBlink 1.4s ease-in-out infinite;
+}
+.idot:nth-child(2) { animation-delay: .2s; background: var(--purple); box-shadow: 0 0 10px var(--purple); }
+.idot:nth-child(3) { animation-delay: .4s; background: var(--magenta); box-shadow: 0 0 10px var(--magenta); }
+@keyframes dotBlink { 0%,100%{opacity:.2;transform:scale(.8)} 50%{opacity:1;transform:scale(1.3)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* Exit */
+.intro-out {
+  animation: introFade 0.9s cubic-bezier(0.7,0,1,0.8) forwards;
+}
+@keyframes introFade {
+  to { opacity:0; transform:scale(1.06); }
+}
+
+/* =====================
+   DASHBOARD
+   ===================== */
+#dashboard {
+  display: none; opacity:0;
+  transition: opacity .7s ease;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 20% 0%,   rgba(106,10,255,0.2)  0%, transparent 45%),
+    radial-gradient(ellipse at 80% 100%, rgba(0,212,255,0.12)  0%, transparent 45%),
+    radial-gradient(ellipse at 50% 50%,  rgba(10,32,96,0.5)   0%, transparent 70%),
+    var(--blue-deep);
+}
+#dashboard.vis { opacity:1; }
+
+/* BG particle canvas */
+#bgCanvas { position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.4; }
+
+/* ---- HEADER ---- */
+.ucl-header {
+  position: sticky; top:0; z-index:200;
+  height: 70px;
+  background: linear-gradient(135deg, rgba(5,13,31,0.95) 0%, rgba(10,32,96,0.85) 100%);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,212,255,0.2);
+  box-shadow: 0 4px 40px rgba(0,0,0,0.6), 0 1px 0 rgba(0,212,255,0.15);
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 0 36px;
+}
+
+.hdr-left { display:flex; align-items:center; gap:14px; }
+
+.hdr-ball-icon {
+  width: 44px; height: 44px;
+  filter: drop-shadow(0 0 10px rgba(0,212,255,0.7));
+}
+
+.hdr-brand {}
+.hdr-brand-top {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.55rem; letter-spacing: 5px;
+  color: var(--cyan); display:block;
+}
+.hdr-brand-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem; letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(0,212,255,0.5);
+}
+
+.hdr-nav { display:flex; gap:2px; }
+.nav-btn {
+  background: transparent;
+  border: none; outline: none;
+  color: rgba(255,255,255,0.5);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 9px 18px;
+  cursor: pointer; border-radius: 3px;
+  transition: all 0.25s;
+  position: relative;
+}
+.nav-btn::after {
+  content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:0; height:2px;
+  background: linear-gradient(to right, var(--cyan), var(--purple));
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+.nav-btn:hover { color: var(--white-soft); }
+.nav-btn.active { color: #fff; }
+.nav-btn.active::after { width: 70%; }
+
+.hdr-right {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.58rem; letter-spacing: 3px;
+  color: var(--cyan); opacity: 0.7;
+  border: 1px solid rgba(0,212,255,0.2);
+  padding: 6px 14px; border-radius: 2px;
+  background: rgba(0,212,255,0.05);
+}
+
+/* ---- PAGE WRAPPER ---- */
+.page { display:none; padding: 36px 40px; position:relative; z-index:1; }
+.page.active { display:block; }
+
+/* Page heading */
+.pg-head { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid rgba(0,212,255,0.12); display:flex; align-items:flex-end; justify-content:space-between; }
+.pg-title { font-family:'Bebas Neue', sans-serif; font-size:2.4rem; letter-spacing:5px; background: linear-gradient(135deg, #fff 0%, var(--cyan) 60%, var(--purple) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.pg-sub { font-size:0.68rem; letter-spacing:4px; color:var(--silver); margin-top:3px; }
+
+/* ---- STAT CARDS ---- */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:28px; }
+
+.scard {
+  background: linear-gradient(135deg, rgba(10,32,96,0.6) 0%, rgba(5,13,31,0.8) 100%);
+  border: 1px solid rgba(0,212,255,0.15);
+  border-radius: 8px; padding: 24px 22px;
+  position: relative; overflow:hidden;
+  transition: transform .3s, box-shadow .3s;
+}
+.scard:hover { transform:translateY(-4px); box-shadow:0 16px 50px rgba(0,212,255,0.15), 0 0 0 1px rgba(0,212,255,0.25); }
+.scard::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:2px;
+  background: linear-gradient(to right, var(--blue-elec), var(--cyan), var(--purple));
+  border-radius: 8px 8px 0 0;
+}
+.scard-glow {
+  position:absolute; inset:0;
+  background: radial-gradient(circle at 80% 20%, rgba(0,212,255,0.06) 0%, transparent 60%);
+  pointer-events:none;
+}
+.scard-icon { font-size:1.5rem; margin-bottom:10px; display:block; }
+.scard-val {
+  font-family:'Bebas Neue', sans-serif; font-size:3rem; line-height:1;
+  background: linear-gradient(135deg, #fff, var(--cyan));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.scard-lbl { font-size:0.62rem; letter-spacing:3px; color:var(--silver); margin-top:5px; font-weight:600; }
+
+/* ---- CARDS ---- */
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-bottom:22px; }
+.grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:22px; margin-bottom:22px; }
+.span2 { grid-column: span 2; }
+
+.ucard {
+  background: linear-gradient(145deg, rgba(10,32,96,0.45) 0%, rgba(5,13,31,0.7) 100%);
+  border: 1px solid rgba(0,212,255,0.12);
+  border-radius: 10px; overflow:hidden;
+  position:relative;
+}
+.ucard::before {
+  content:''; position:absolute;
+  inset:0; pointer-events:none;
+  background: radial-gradient(ellipse at 100% 0%, rgba(106,10,255,0.07) 0%, transparent 50%);
+}
+
+.ucard-head {
+  padding: 16px 22px;
+  background: linear-gradient(135deg, rgba(10,32,96,0.7), rgba(106,10,255,0.15));
+  border-bottom: 1px solid rgba(0,212,255,0.1);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.ucard-title {
+  font-family:'Bebas Neue', sans-serif; font-size:1rem;
+  letter-spacing:3px; color:var(--cyan);
+  text-shadow: 0 0 15px rgba(0,212,255,0.5);
+}
+.ucard-badge {
+  font-size:0.58rem; letter-spacing:2px; color:var(--silver);
+  border: 1px solid rgba(0,212,255,0.15);
+  padding: 3px 10px; border-radius:20px;
+  background: rgba(0,212,255,0.05);
+  font-family:'Orbitron',sans-serif;
+}
+.ucard-body { padding: 20px 22px; }
+
+/* chart */
+.chart-box { position:relative; height:280px; }
+
+/* ---- TABLE ---- */
+.ucl-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+.ucl-table thead th {
+  font-family:'Orbitron',sans-serif; font-size:0.55rem;
+  letter-spacing:3px; color:var(--cyan); padding:11px 14px;
+  text-align:left; border-bottom:1px solid rgba(0,212,255,0.15);
+  font-weight:400;
+}
+.ucl-table tbody tr { border-bottom:1px solid rgba(255,255,255,0.04); transition:background .2s; }
+.ucl-table tbody tr:hover { background:rgba(0,212,255,0.05); }
+.ucl-table tbody td { padding:11px 14px; color:var(--silver); font-weight:500; }
+.td-name { color:#fff !important; font-weight:700; }
+.td-goals { font-family:'Bebas Neue',sans-serif; font-size:1.15rem; color:var(--cyan) !important; }
+
+/* rank badges */
+.rb { width:26px; height:26px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:.95rem; }
+.rb-1 { background:linear-gradient(135deg,#ffd700,#ffb300); color:#000; box-shadow:0 0 10px rgba(255,215,0,0.5); }
+.rb-2 { background:linear-gradient(135deg,#8a9ab0,#c8d4e8); color:#000; }
+.rb-3 { background:linear-gradient(135deg,#c8884c,#e0a060); color:#000; }
+.rb-n { background:rgba(255,255,255,0.07); color:var(--silver); }
+
+/* ---- PODIUM ---- */
+.podium { display:flex; align-items:flex-end; justify-content:center; gap:14px; padding:20px 0 0; }
+.pod-item { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.pod-name { font-weight:800; font-size:0.88rem; color:#fff; text-align:center; max-width:100px; }
+.pod-team { font-size:0.65rem; color:var(--silver); text-align:center; }
+.pod-goals { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; color:var(--cyan); text-shadow:0 0 15px var(--cyan); }
+.pod-block { width:96px; border-radius:4px 4px 0 0; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:2rem; }
+.pod-1 { background:linear-gradient(to top,#b8860b,#ffd700); height:110px; color:rgba(0,0,0,0.5); box-shadow:0 0 30px rgba(255,215,0,0.4); }
+.pod-2 { background:linear-gradient(to top,#606878,#c0c8d8); height:82px; color:rgba(0,0,0,0.4); }
+.pod-3 { background:linear-gradient(to top,#7c4a20,#c8884c); height:60px; color:rgba(0,0,0,0.4); }
+
+/* ---- TIMELINE ---- */
+.tl-item { display:flex; align-items:center; gap:14px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.tl-year { font-family:'Orbitron',sans-serif; font-size:0.6rem; color:var(--cyan); width:44px; flex-shrink:0; letter-spacing:1px; }
+.tl-bar-wrap { flex:1; height:22px; }
+.tl-bar { height:22px; border-radius:3px; background:linear-gradient(to right,var(--blue-mid),var(--cyan)); display:flex; align-items:center; padding-left:10px; min-width:50px; box-shadow:0 0 12px rgba(0,212,255,0.3); }
+.tl-player { font-size:0.72rem; font-weight:700; color:#fff; white-space:nowrap; }
+.tl-g { font-family:'Bebas Neue',sans-serif; font-size:1.05rem; color:var(--cyan); width:28px; text-align:right; flex-shrink:0; }
+
+/* ---- TEAM GRID ---- */
+.team-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:12px; }
+.tcard {
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(0,212,255,0.1);
+  border-radius:8px; padding:16px 10px;
+  text-align:center; cursor:default; transition:all .3s;
+}
+.tcard:hover { border-color:var(--cyan); background:rgba(0,212,255,0.06); transform:translateY(-3px); box-shadow:0 10px 30px rgba(0,212,255,0.15); }
+.tc-emoji { font-size:1.8rem; display:block; margin-bottom:6px; }
+.tc-name { font-size:0.75rem; font-weight:700; color:#fff; display:block; margin-bottom:4px; }
+.tc-g { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--cyan); display:block; }
+.tc-gl { font-size:0.55rem; letter-spacing:2px; color:var(--silver); display:block; }
+
+/* ---- EFFICIENCY ---- */
+.eff-item { display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.eff-r { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--purple); width:22px; }
+.eff-n { flex:1; font-weight:700; font-size:0.85rem; color:#fff; }
+.eff-bw { width:90px; height:5px; background:rgba(255,255,255,0.08); border-radius:3px; }
+.eff-b { height:5px; border-radius:3px; background:linear-gradient(to right,var(--blue-elec),var(--cyan)); box-shadow:0 0 8px rgba(0,212,255,0.5); }
+.eff-p { font-family:'Orbitron',sans-serif; font-size:0.65rem; color:var(--cyan); width:38px; text-align:right; }
+
+/* ---- FILTER BAR ---- */
+.fbar { display:flex; gap:10px; margin-bottom:22px; flex-wrap:wrap; }
+.fsel {
+  background:rgba(10,32,96,0.6); border:1px solid rgba(0,212,255,0.2);
+  color:#fff; padding:9px 16px; font-family:'Montserrat',sans-serif;
+  font-size:0.78rem; font-weight:600; border-radius:4px;
+  cursor:pointer; outline:none; transition:border-color .2s;
+}
+.fsel:hover, .fsel:focus { border-color:var(--cyan); }
+.fsel option { background:#071530; }
+
+/* scrollbar */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:linear-gradient(to bottom,var(--cyan),var(--purple)); border-radius:4px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ INTRO ══════════════════ -->
+<div id="intro">
+  <div class="nebula"></div>
+  <div class="stars" id="starsEl"></div>
+
+  <div class="intro-ball-wrap">
+    <div class="ball-glow-ring"></div>
+    <!-- UCL BALL SVG — estrelas em hexágono no estilo oficial -->
+    <svg class="ball-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="ballBg" cx="40%" cy="35%">
+          <stop offset="0%"   stop-color="#1a4fff"/>
+          <stop offset="45%"  stop-color="#0a1e6e"/>
+          <stop offset="100%" stop-color="#05081a"/>
+        </radialGradient>
+        <radialGradient id="ballShine" cx="35%" cy="28%">
+          <stop offset="0%"   stop-color="rgba(255,255,255,0.35)"/>
+          <stop offset="60%"  stop-color="rgba(0,212,255,0.08)"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+        <radialGradient id="ballMag" cx="70%" cy="75%">
+          <stop offset="0%"   stop-color="rgba(196,26,255,0.3)"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Ball body -->
+      <circle cx="100" cy="100" r="95" fill="url(#ballBg)"/>
+      <circle cx="100" cy="100" r="95" fill="url(#ballShine)"/>
+      <circle cx="100" cy="100" r="95" fill="url(#ballMag)"/>
+      <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(0,212,255,0.5)" stroke-width="1.5"/>
+
+      <!-- Ring of stars (8 stars around center) -->
+      <g filter="url(#glow)" fill="#ffffff">
+        <!-- center star -->
+        <polygon points="100,78 103.5,89 115,89 106,95.5 109.5,107 100,100.5 90.5,107 94,95.5 85,89 96.5,89" opacity="1"/>
+
+        <!-- surrounding stars — rotated copies -->
+        <g transform="rotate(0   100 100) translate(0,-38)"><polygon points="100,78 101.8,83.5 107.5,83.5 103,86.5 104.8,92 100,89 95.2,92 97,86.5 92.5,83.5 98.2,83.5" transform="scale(0.6) translate(67,57)"/></g>
+        <g transform="rotate(45  100 100) translate(0,-38)"><polygon points="100,78 101.8,83.5 107.5,83.5 103,86.5 104.8,92 100,89 95.2,92 97,86.5 92.5,83.5 98.2,83.5" transform="scale(0.6) translate(67,57)"/></g>
+        <g transform="rotate(90  100 100) translate(0,-38)"><polygon points="100,78 101.8,83.5 107.5,83.5 103,86.5 104.8,92 100,89 95.2,92 97,86.5 92.5,83.5 98.2,83.5" transform="scale(0.6) translate(67,57)"/></g>
+        <g transform="rotate(135 100 100) translate(0,-38)"><polygon points="100,78 101.8,83.5 107.5,83.5 103,86.5 104.8,92 100,89 95.2,92 97,86.5 92.5,83.5 98.2,83.5" transform="scale(0.6) translate(67,57)"/></g>
+        <g transform="rotate(180 100 100) translate(0,-38)"><polygon points="100,78 101.8,83.5 107.5,83.5 103,86.5 104.8,92 100,89 95.2,92 97,86.5 92.5,83.5 98.2,83.5" transform="scale(0.6) translate(67,57)"/></g>
+        <g transform="rotate(225 100 100) translate(0,-38)"><polygon points="100,78 101.8,83.5 107.5,83.5 103,86.5 104.8,92 100,89 95.2,92 97,86.5 92.5,83.5 98.2,83.5" transform="scale(0.6) translate(67,57)"/></g>
+        <g transform="rotate(270 100 100) translate(0,-38)"><polygon points="100,78 101.8,83.5 107.5,83.5 103,86.5 104.8,92 100,89 95.2,92 97,86.5 92.5,83.5 98.2,83.5" transform="scale(0.6) translate(67,57)"/></g>
+        <g transform="rotate(315 100 100) translate(0,-38)"><polygon points="100,78 101.8,83.5 107.5,83.5 103,86.5 104.8,92 100,89 95.2,92 97,86.5 92.5,83.5 98.2,83.5" transform="scale(0.6) translate(67,57)"/></g>
+      </g>
+
+      <!-- UEFA text -->
+      <text x="100" y="136" text-anchor="middle" font-family="Orbitron" font-size="9" fill="rgba(0,212,255,0.9)" letter-spacing="4" font-weight="700">UEFA</text>
+      <text x="100" y="148" text-anchor="middle" font-family="Bebas Neue" font-size="16" fill="#ffffff" letter-spacing="3">CHAMPIONS</text>
+      <text x="100" y="160" text-anchor="middle" font-family="Bebas Neue" font-size="16" fill="#ffffff" letter-spacing="3">LEAGUE</text>
+    </svg>
+  </div>
+
+  <!-- Trophy -->
+  <div class="intro-trophy">
+    <svg class="trophy-svg" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="trophyG" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#ffffff"/>
+          <stop offset="40%"  stop-color="#e0ecff"/>
+          <stop offset="100%" stop-color="#a0b8e0"/>
+        </linearGradient>
+      </defs>
+      <!-- Cup body -->
+      <path d="M35,10 L65,10 L70,55 Q70,80 50,85 Q30,80 30,55 Z" fill="url(#trophyG)" opacity="0.95"/>
+      <!-- Handles -->
+      <path d="M30,20 Q15,20 15,38 Q15,52 30,52" fill="none" stroke="url(#trophyG)" stroke-width="5" stroke-linecap="round"/>
+      <path d="M70,20 Q85,20 85,38 Q85,52 70,52" fill="none" stroke="url(#trophyG)" stroke-width="5" stroke-linecap="round"/>
+      <!-- Stem -->
+      <rect x="44" y="85" width="12" height="25" fill="url(#trophyG)" rx="2"/>
+      <!-- Base -->
+      <rect x="30" y="108" width="40" height="8"  fill="url(#trophyG)" rx="3"/>
+      <rect x="25" y="114" width="50" height="10" fill="url(#trophyG)" rx="3"/>
+    </svg>
+  </div>
+
+  <div class="intro-text">
+    <p class="intro-label">Dashboard · Análise Histórica</p>
+    <h1 class="intro-title">ARTILHEIROS</h1>
+    <p class="intro-subtitle">CHAMPIONS LEAGUE · TOP SCORERS</p>
+    <p class="intro-years-str">2012 — 2013 — 2014 — 2015 — 2016 — 2017 — 2018 — 2019 — 2020 — 2021 — 2022 — 2023 — 2024</p>
+    <div class="intro-line"></div>
+    <div class="intro-dots">
+      <div class="idot"></div>
+      <div class="idot"></div>
+      <div class="idot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ DASHBOARD ══════════════════ -->
+<div id="dashboard">
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- HEADER -->
+  <header class="ucl-header">
+    <div class="hdr-left">
+      <!-- mini ball -->
+      <svg class="hdr-ball-icon" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="20" fill="#0a2060" stroke="rgba(0,212,255,0.6)" stroke-width="1.2"/>
+        <g fill="#fff" transform="translate(22,22)">
+          <polygon points="0,-10 1.8,-4.4 7.6,-4.4 3.1,-1.4 4.9,4.4 0,1.4 -4.9,4.4 -3.1,-1.4 -7.6,-4.4 -1.8,-4.4" transform="scale(0.55)"/>
+          <polygon points="0,-10 1.8,-4.4 7.6,-4.4 3.1,-1.4 4.9,4.4 0,1.4 -4.9,4.4 -3.1,-1.4 -7.6,-4.4 -1.8,-4.4" transform="scale(0.35) translate(16,-5)"/>
+          <polygon points="0,-10 1.8,-4.4 7.6,-4.4 3.1,-1.4 4.9,4.4 0,1.4 -4.9,4.4 -3.1,-1.4 -7.6,-4.4 -1.8,-4.4" transform="scale(0.35) translate(-16,-5)"/>
+        </g>
+      </svg>
+      <div class="hdr-brand">
+        <span class="hdr-brand-top">UEFA</span>
+        <div class="hdr-brand-name">Champions League</div>
+      </div>
+    </div>
+
+    <nav class="hdr-nav">
+      <button class="nav-btn active" onclick="goPage('overview',this)">VISÃO GERAL</button>
+      <button class="nav-btn" onclick="goPage('players',this)">JOGADORES</button>
+      <button class="nav-btn" onclick="goPage('teams',this)">TIMES</button>
+      <button class="nav-btn" onclick="goPage('history',this)">HISTÓRICO</button>
+    </nav>
+
+    <div class="hdr-right">⚽ 2012–2024</div>
+  </header>
+
+  <!-- PAGE: OVERVIEW -->
+  <div id="pg-overview" class="page active">
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">VISÃO GERAL</div>
+        <div class="pg-sub">ARTILHEIROS HISTÓRICOS · 2012–2024</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="scard"><div class="scard-glow"></div><span class="scard-icon">⚽</span><div class="scard-val" id="sv-goals">—</div><div class="scard-lbl">GOLS REGISTRADOS</div></div>
+      <div class="scard"><div class="scard-glow"></div><span class="scard-icon">👑</span><div class="scard-val" id="sv-king">—</div><div class="scard-lbl">MAIOR ARTILHEIRO</div></div>
+      <div class="scard"><div class="scard-glow"></div><span class="scard-icon">🌍</span><div class="scard-val" id="sv-players">—</div><div class="scard-lbl">JOGADORES NA LISTA</div></div>
+      <div class="scard"><div class="scard-glow"></div><span class="scard-icon">🏟️</span><div class="scard-val" id="sv-teams">—</div><div class="scard-lbl">TIMES REPRESENTADOS</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="ucard">
+        <div class="ucard-head"><span class="ucard-title">TOP 10 ALL-TIME</span><span class="ucard-badge">ACUMULADO</span></div>
+        <div class="ucard-body"><div class="chart-box"><canvas id="ch-top10"></canvas></div></div>
+      </div>
+      <div class="ucard">
+        <div class="ucard-head"><span class="ucard-title">GOLS POR TEMPORADA</span><span class="ucard-badge">ARTILHEIRO ANUAL</span></div>
+        <div class="ucard-body"><div class="chart-box"><canvas id="ch-seasons"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="grid3">
+      <div class="ucard span2">
+        <div class="ucard-head"><span class="ucard-title">PÓDIO ALL-TIME</span><span class="ucard-badge">TOP 3 ACUMULADO</span></div>
+        <div class="ucard-body"><div class="podium" id="podiumEl"></div></div>
+      </div>
+      <div class="ucard">
+        <div class="ucard-head"><span class="ucard-title">GOLS POR CLUBE</span><span class="ucard-badge">TOP 6</span></div>
+        <div class="ucard-body"><div class="chart-box" style="height:230px;"><canvas id="ch-pie"></canvas></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: PLAYERS -->
+  <div id="pg-players" class="page">
+    <div class="pg-head">
+      <div><div class="pg-title">JOGADORES</div><div class="pg-sub">RANKING COMPLETO DE ARTILHEIROS</div></div>
+    </div>
+    <div class="fbar">
+      <select class="fsel" id="fs-season" onchange="filterTable()"><option value="">Todas as Temporadas</option></select>
+      <select class="fsel" id="fs-team"   onchange="filterTable()"><option value="">Todos os Times</option></select>
+    </div>
+    <div class="ucard">
+      <div class="ucard-head"><span class="ucard-title">ARTILHEIROS</span><span class="ucard-badge" id="tbl-count">—</span></div>
+      <div style="overflow-x:auto;max-height:540px;overflow-y:auto;">
+        <table class="ucl-table" id="tbl-players">
+          <thead><tr><th>#</th><th>JOGADOR</th><th>TIME</th><th>TEMPORADA</th><th>GOLS</th><th>ASSIST.</th><th>CHUTES</th></tr></thead>
+          <tbody id="tbl-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: TEAMS -->
+  <div id="pg-teams" class="page">
+    <div class="pg-head">
+      <div><div class="pg-title">TIMES</div><div class="pg-sub">DESEMPENHO DOS CLUBES</div></div>
+    </div>
+    <div class="grid2">
+      <div class="ucard">
+        <div class="ucard-head"><span class="ucard-title">GOLS POR CLUBE</span><span class="ucard-badge">TOP 10</span></div>
+        <div class="ucard-body"><div class="chart-box"><canvas id="ch-teams"></canvas></div></div>
+      </div>
+      <div class="ucard">
+        <div class="ucard-head"><span class="ucard-title">EFICIÊNCIA</span><span class="ucard-badge">GOLS / CHUTES</span></div>
+        <div class="ucard-body" id="eff-list"></div>
+      </div>
+    </div>
+    <div class="ucard">
+      <div class="ucard-head"><span class="ucard-title">TODOS OS TIMES</span><span class="ucard-badge" id="team-count-badge">—</span></div>
+      <div class="ucard-body"><div class="team-grid" id="team-grid"></div></div>
+    </div>
+  </div>
+
+  <!-- PAGE: HISTORY -->
+  <div id="pg-history" class="page">
+    <div class="pg-head">
+      <div><div class="pg-title">HISTÓRICO</div><div class="pg-sub">ARTILHEIRO DE CADA TEMPORADA</div></div>
+    </div>
+    <div class="grid2">
+      <div class="ucard">
+        <div class="ucard-head"><span class="ucard-title">ARTILHEIRO POR ANO</span><span class="ucard-badge">2012–2024</span></div>
+        <div class="ucard-body" style="padding:12px 16px;" id="timeline-wrap"></div>
+      </div>
+      <div class="ucard">
+        <div class="ucard-head"><span class="ucard-title">EVOLUÇÃO HISTÓRICA</span><span class="ucard-badge">MÉDIA DE GOLS</span></div>
+        <div class="ucard-body"><div class="chart-box"><canvas id="ch-history"></canvas></div></div>
+      </div>
+    </div>
+    <div class="ucard" style="margin-top:22px;">
+      <div class="ucard-head"><span class="ucard-title">TABELA COMPLETA</span><span class="ucard-badge">TODOS OS ARTILHEIROS POR ANO</span></div>
+      <div style="overflow-x:auto;">
+        <table class="ucl-table">
+          <thead><tr><th>TEMPORADA</th><th>ARTILHEIRO</th><th>TIME</th><th>GOLS</th><th>ASSIST.</th><th>CHUTES</th></tr></thead>
+          <tbody id="hist-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /dashboard -->
+
+<script>
+// ── STARS ──
+(()=>{
+  const el = document.getElementById('starsEl');
+  for(let i=0;i<160;i++){
+    const s=document.createElement('div');
+    s.className='star-p';
+    const sz=0.5+Math.random()*2;
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;--d:${1.5+Math.random()*4}s;--dl:${Math.random()*5}s;opacity:${.1+Math.random()*.6}`;
+    el.appendChild(s);
+  }
+})();
+
+// ── BG CANVAS (floating particles in dashboard) ──
+(()=>{
+  const c=document.getElementById('bgCanvas');
+  const ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+  for(let i=0;i<60;i++) pts.push({x:Math.random()*9999,y:Math.random()*9999,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5,a:Math.random()});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x%W,p.y%H,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,212,255,${p.a*.4})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── INTRO TIMING ──
+setTimeout(()=>{
+  document.getElementById('intro').classList.add('intro-out');
+  setTimeout(()=>{
+    document.getElementById('intro').style.display='none';
+    const d=document.getElementById('dashboard');
+    d.style.display='block';
+    setTimeout(()=>{ d.classList.add('vis'); init(); },60);
+  },900);
+},5500);
+
+// ── DATA ──
+const DATA=[
+  {T:2012,N:"Messi",            C:"Barcelona",         G:14,A:2, S:40},
+  {T:2012,N:"Cristiano Ronaldo",C:"Real Madrid",        G:10,A:2, S:38},
+  {T:2012,N:"Mario Gomez",      C:"Bayern Munich",      G:8, A:1, S:25},
+  {T:2012,N:"Karim Benzema",    C:"Real Madrid",        G:7, A:3, S:20},
+  {T:2012,N:"Didier Drogba",    C:"Chelsea",            G:6, A:0, S:18},
+  {T:2013,N:"Cristiano Ronaldo",C:"Real Madrid",        G:12,A:4, S:42},
+  {T:2013,N:"Robert Lewandowski",C:"Borussia Dortmund", G:10,A:3, S:30},
+  {T:2013,N:"Thomas Muller",    C:"Bayern Munich",      G:6, A:3, S:19},
+  {T:2013,N:"Arjen Robben",     C:"Bayern Munich",      G:7, A:2, S:22},
+  {T:2013,N:"Radamel Falcao",   C:"Atletico Madrid",   G:6, A:1, S:18},
+  {T:2014,N:"Cristiano Ronaldo",C:"Real Madrid",        G:17,A:1, S:55},
+  {T:2014,N:"Karim Benzema",    C:"Real Madrid",        G:10,A:3, S:28},
+  {T:2014,N:"Diego Costa",      C:"Atletico Madrid",   G:8, A:1, S:22},
+  {T:2014,N:"Gareth Bale",      C:"Real Madrid",        G:6, A:2, S:19},
+  {T:2014,N:"Robert Lewandowski",C:"Borussia Dortmund", G:6, A:2, S:18},
+  {T:2015,N:"Cristiano Ronaldo",C:"Real Madrid",        G:10,A:5, S:38},
+  {T:2015,N:"Neymar",           C:"Barcelona",          G:10,A:6, S:35},
+  {T:2015,N:"Messi",            C:"Barcelona",          G:10,A:5, S:32},
+  {T:2015,N:"Alexis Sanchez",   C:"Barcelona",          G:7, A:2, S:21},
+  {T:2015,N:"Luis Suarez",      C:"Barcelona",          G:6, A:4, S:20},
+  {T:2016,N:"Cristiano Ronaldo",C:"Real Madrid",        G:16,A:2, S:52},
+  {T:2016,N:"Robert Lewandowski",C:"Bayern Munich",     G:9, A:3, S:29},
+  {T:2016,N:"Antoine Griezmann",C:"Atletico Madrid",   G:7, A:1, S:22},
+  {T:2016,N:"Thomas Muller",    C:"Bayern Munich",      G:6, A:5, S:20},
+  {T:2016,N:"Gareth Bale",      C:"Real Madrid",        G:6, A:4, S:18},
+  {T:2017,N:"Cristiano Ronaldo",C:"Real Madrid",        G:12,A:4, S:45},
+  {T:2017,N:"Robert Lewandowski",C:"Bayern Munich",     G:8, A:2, S:27},
+  {T:2017,N:"Karim Benzema",    C:"Real Madrid",        G:8, A:5, S:24},
+  {T:2017,N:"Edinson Cavani",   C:"PSG",                G:6, A:1, S:18},
+  {T:2017,N:"Antoine Griezmann",C:"Atletico Madrid",   G:5, A:2, S:16},
+  {T:2018,N:"Cristiano Ronaldo",C:"Real Madrid",        G:15,A:3, S:47},
+  {T:2018,N:"Mohamed Salah",    C:"Liverpool",          G:11,A:2, S:36},
+  {T:2018,N:"Sadio Mane",       C:"Liverpool",          G:10,A:3, S:28},
+  {T:2018,N:"Karim Benzema",    C:"Real Madrid",        G:8, A:3, S:23},
+  {T:2018,N:"Roberto Firmino",  C:"Liverpool",          G:8, A:5, S:22},
+  {T:2019,N:"Lionel Messi",     C:"Barcelona",          G:12,A:3, S:40},
+  {T:2019,N:"Raheem Sterling",  C:"Manchester City",    G:7, A:2, S:22},
+  {T:2019,N:"Cristiano Ronaldo",C:"Juventus",           G:6, A:1, S:24},
+  {T:2019,N:"Sadio Mane",       C:"Liverpool",          G:6, A:2, S:19},
+  {T:2019,N:"Roberto Firmino",  C:"Liverpool",          G:6, A:3, S:18},
+  {T:2020,N:"Robert Lewandowski",C:"Bayern Munich",     G:15,A:5, S:46},
+  {T:2020,N:"Neymar",           C:"PSG",                G:8, A:5, S:30},
+  {T:2020,N:"Serge Gnabry",     C:"Bayern Munich",      G:8, A:2, S:22},
+  {T:2020,N:"Kylian Mbappe",    C:"PSG",                G:5, A:5, S:18},
+  {T:2020,N:"Choupo-Moting",    C:"Bayern Munich",      G:6, A:1, S:15},
+  {T:2021,N:"Erling Haaland",   C:"Borussia Dortmund",  G:10,A:2, S:28},
+  {T:2021,N:"Kylian Mbappe",    C:"PSG",                G:8, A:5, S:27},
+  {T:2021,N:"Mohamed Salah",    C:"Liverpool",          G:6, A:1, S:20},
+  {T:2021,N:"Raheem Sterling",  C:"Manchester City",    G:6, A:3, S:19},
+  {T:2021,N:"Cristiano Ronaldo",C:"Juventus",           G:4, A:0, S:16},
+  {T:2022,N:"Karim Benzema",    C:"Real Madrid",        G:15,A:3, S:45},
+  {T:2022,N:"Robert Lewandowski",C:"Bayern Munich",     G:13,A:3, S:38},
+  {T:2022,N:"Kylian Mbappe",    C:"PSG",                G:11,A:4, S:35},
+  {T:2022,N:"Sebastien Haller", C:"Ajax",               G:11,A:1, S:30},
+  {T:2022,N:"Erling Haaland",   C:"Borussia Dortmund",  G:6, A:2, S:19},
+  {T:2023,N:"Erling Haaland",   C:"Manchester City",    G:12,A:2, S:35},
+  {T:2023,N:"Karim Benzema",    C:"Real Madrid",        G:8, A:4, S:24},
+  {T:2023,N:"Vinicius Jr",      C:"Real Madrid",        G:7, A:5, S:28},
+  {T:2023,N:"Victor Osimhen",   C:"Napoli",             G:6, A:1, S:19},
+  {T:2023,N:"Rodrygo",          C:"Real Madrid",        G:6, A:2, S:18},
+  {T:2024,N:"Erling Haaland",   C:"Manchester City",    G:10,A:1, S:30},
+  {T:2024,N:"Kylian Mbappe",    C:"PSG",                G:8, A:3, S:25},
+  {T:2024,N:"Vinicius Jr",      C:"Real Madrid",        G:6, A:6, S:22},
+  {T:2024,N:"Bukayo Saka",      C:"Arsenal",            G:5, A:3, S:17},
+  {T:2024,N:"Lamine Yamal",     C:"Barcelona",          G:4, A:5, S:18},
+];
+
+const EMOJIS={"Real Madrid":"⚪","Barcelona":"🔵","Bayern Munich":"🔴","Liverpool":"❤️","Manchester City":"🩵","PSG":"🔵","Borussia Dortmund":"🟡","Atletico Madrid":"🔴","Juventus":"⬛","Ajax":"🔴","Chelsea":"🔵","Napoli":"🩵","Arsenal":"❤️","Napoli":"🩵"};
+const EM=t=>EMOJIS[t]||"🏟️";
+
+const CHART_DEFAULTS={
+  color:'rgba(152,170,204,0.9)',
+  gridColor:'rgba(0,212,255,0.07)',
+  font:{family:'Montserrat',size:11},
+};
+
+function mkChart(id,type,labels,datasets,opts={}){
+  const ctx=document.getElementById(id).getContext('2d');
+  return new Chart(ctx,{
+    type,
+    data:{labels,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},...(opts.plugins||{})},
+      scales:opts.noScales?{}:{
+        x:{ticks:{color:CHART_DEFAULTS.color,font:CHART_DEFAULTS.font},grid:{color:CHART_DEFAULTS.gridColor,...(opts.xgrid||{})}},
+        y:{ticks:{color:CHART_DEFAULTS.color,font:CHART_DEFAULTS.font},grid:{color:CHART_DEFAULTS.gridColor}},
+        ...(opts.scales||{})
+      },
+      ...opts.extra
+    }
+  });
+}
+
+function init(){
+  /* totals */
+  const totalG=DATA.reduce((s,d)=>s+d.G,0);
+  const pTotals={};
+  DATA.forEach(d=>{pTotals[d.N]=(pTotals[d.N]||0)+d.G;});
+  const sortedP=Object.entries(pTotals).sort((a,b)=>b[1]-a[1]);
+  const uniqPlayers=[...new Set(DATA.map(d=>d.N))];
+  const uniqTeams=[...new Set(DATA.map(d=>d.C))];
+
+  document.getElementById('sv-goals').textContent=totalG;
+  document.getElementById('sv-king').textContent=sortedP[0][0].split(' ').pop().toUpperCase();
+  document.getElementById('sv-players').textContent=uniqPlayers.length;
+  document.getElementById('sv-teams').textContent=uniqTeams.length;
+
+  /* top 10 bar */
+  const top10=sortedP.slice(0,10);
+  mkChart('ch-top10','bar',
+    top10.map(([n])=>n.split(' ').slice(-1)[0]),
+    [{
+      data:top10.map(([,v])=>v),
+      backgroundColor:top10.map((_,i)=>i===0?'rgba(0,212,255,0.9)':i===1?'rgba(106,10,255,0.8)':i===2?'rgba(196,26,255,0.7)':'rgba(15,79,255,0.6)'),
+      borderColor:'rgba(0,212,255,0.2)',borderWidth:1,borderRadius:4,
+    }],
+    {xgrid:{display:false}}
+  );
+
+  /* season goals line */
+  const seasons=[...new Set(DATA.map(d=>d.T))].sort();
+  const topPerSeason=seasons.map(y=>DATA.filter(d=>d.T===y).sort((a,b)=>b.G-a.G)[0].G);
+  mkChart('ch-seasons','line',seasons,[{
+    data:topPerSeason,
+    borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.08)',
+    borderWidth:2.5,pointBackgroundColor:'#00d4ff',pointRadius:5,
+    fill:true,tension:.35,pointHoverRadius:8,
+    pointShadowBlur:20,
+  }]);
+
+  /* podium */
+  const pod=document.getElementById('podiumEl');
+  const order=[1,0,2],clss=['pod-2','pod-1','pod-3'],nums=['2°','1°','3°'];
+  order.forEach((idx,pos)=>{
+    const [name,goals]=sortedP[idx];
+    const team=Object.entries(DATA.filter(d=>d.N===name).reduce((a,d)=>{a[d.C]=(a[d.C]||0)+1;return a;},{})).sort((a,b)=>b[1]-a[1])[0][0];
+    const div=document.createElement('div');
+    div.className='pod-item';
+    div.innerHTML=`
+      <div class="pod-name">${name}</div>
+      <div class="pod-team">${EM(team)} ${team}</div>
+      <div class="pod-goals">${goals} ⚽</div>
+      <div class="pod-block ${clss[pos]}">${nums[pos]}</div>`;
+    pod.appendChild(div);
+  });
+
+  /* pie */
+  const tgMap={};
+  DATA.forEach(d=>{tgMap[d.C]=(tgMap[d.C]||0)+d.G;});
+  const tgSorted=Object.entries(tgMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  mkChart('ch-pie','doughnut',
+    tgSorted.map(([t])=>t.split(' ').slice(-1)[0]),
+    [{
+      data:tgSorted.map(([,v])=>v),
+      backgroundColor:['rgba(0,212,255,0.85)','rgba(106,10,255,0.8)','rgba(196,26,255,0.75)','rgba(15,79,255,0.7)','rgba(26,143,255,0.65)','rgba(152,170,204,0.5)'],
+      borderColor:'#050d1f',borderWidth:2,
+      hoverOffset:8,
+    }],
+    {noScales:true,plugins:{legend:{display:true,labels:{color:'rgba(152,170,204,0.9)',font:{family:'Montserrat',size:11},boxWidth:12}}}}
+  );
+
+  /* players table filters */
+  const fsSeason=document.getElementById('fs-season');
+  const fsTeam=document.getElementById('fs-team');
+  seasons.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;fsSeason.appendChild(o);});
+  uniqTeams.sort().forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;fsTeam.appendChild(o);});
+  filterTable();
+
+  /* teams */
+  const teamStats={};
+  DATA.forEach(d=>{
+    if(!teamStats[d.C]) teamStats[d.C]={goals:0,assists:0,shots:0};
+    teamStats[d.C].goals+=d.G;
+    teamStats[d.C].assists+=d.A;
+    teamStats[d.C].shots+=d.S;
+  });
+  const tSorted=Object.entries(teamStats).sort((a,b)=>b[1].goals-a[1].goals);
+  const top10t=tSorted.slice(0,10);
+
+  mkChart('ch-teams','bar',
+    top10t.map(([t])=>t.split(' ').slice(-1)[0]),
+    [{
+      data:top10t.map(([,v])=>v.goals),
+      backgroundColor:top10t.map((_,i)=>i===0?'rgba(0,212,255,0.9)':i===1?'rgba(106,10,255,0.8)':i===2?'rgba(196,26,255,0.7)':'rgba(15,79,255,0.6)'),
+      borderColor:'rgba(0,212,255,0.15)',borderWidth:1,borderRadius:4,
+    }],
+    {scales:{x:{...{}},y:{}},extra:{indexAxis:'y'}}
+  );
+
+  const effList=document.getElementById('eff-list');
+  const maxPct=40;
+  tSorted.slice(0,8).forEach(([team,s],i)=>{
+    const pct=s.shots>0?Math.round(s.goals/s.shots*100):0;
+    effList.innerHTML+=`<div class="eff-item"><span class="eff-r">${i+1}</span><span class="eff-n">${team.split(' ').slice(-1)[0]}</span><div class="eff-bw"><div class="eff-b" style="width:${Math.min(pct,maxPct)/maxPct*100}%"></div></div><span class="eff-p">${pct}%</span></div>`;
+  });
+
+  const tGrid=document.getElementById('team-grid');
+  document.getElementById('team-count-badge').textContent=`${tSorted.length} TIMES`;
+  tSorted.forEach(([team,s])=>{
+    tGrid.innerHTML+=`<div class="tcard"><span class="tc-emoji">${EM(team)}</span><span class="tc-name">${team}</span><span class="tc-g">${s.goals}</span><span class="tc-gl">GOLS</span></div>`;
+  });
+
+  /* history */
+  const tlWrap=document.getElementById('timeline-wrap');
+  const maxG=Math.max(...seasons.map(y=>DATA.filter(d=>d.T===y).sort((a,b)=>b.G-a.G)[0].G));
+  seasons.forEach(y=>{
+    const top=DATA.filter(d=>d.T===y).sort((a,b)=>b.G-a.G)[0];
+    const pct=(top.G/maxG)*100;
+    tlWrap.innerHTML+=`<div class="tl-item"><span class="tl-year">${y}</span><div class="tl-bar-wrap"><div class="tl-bar" style="width:${pct}%"><span class="tl-player">${top.N.split(' ').slice(-1)[0]}</span></div></div><span class="tl-g">${top.G}</span></div>`;
+  });
+
+  const avgGoals=seasons.map(y=>{const sd=DATA.filter(d=>d.T===y);return+(sd.reduce((s,d)=>s+d.G,0)/sd.length).toFixed(1);});
+  mkChart('ch-history','line',seasons,[{
+    label:'Média de Gols',
+    data:avgGoals,
+    borderColor:'rgba(196,26,255,0.9)',backgroundColor:'rgba(196,26,255,0.08)',
+    borderWidth:2.5,pointBackgroundColor:'#c41aff',pointRadius:5,fill:true,tension:.35,
+  }],{plugins:{legend:{display:true,labels:{color:'rgba(152,170,204,0.9)',font:{family:'Montserrat',size:11}}}}});
+
+  const hBody=document.getElementById('hist-body');
+  seasons.forEach(y=>{
+    const top=DATA.filter(d=>d.T===y).sort((a,b)=>b.G-a.G)[0];
+    hBody.innerHTML+=`<tr>
+      <td style="font-family:Orbitron,sans-serif;font-size:0.65rem;color:var(--cyan);letter-spacing:2px;">${y}</td>
+      <td class="td-name">${top.N}</td>
+      <td>${EM(top.C)} ${top.C}</td>
+      <td class="td-goals">${top.G}</td>
+      <td>${top.A}</td>
+      <td>${top.S}</td>
+    </tr>`;
+  });
+}
+
+function filterTable(){
+  const season=document.getElementById('fs-season').value;
+  const team=document.getElementById('fs-team').value;
+  let f=DATA;
+  if(season) f=f.filter(d=>d.T==season);
+  if(team)   f=f.filter(d=>d.C===team);
+  f=f.sort((a,b)=>b.G-a.G);
+  const body=document.getElementById('tbl-body');
+  body.innerHTML='';
+  f.forEach((d,i)=>{
+    const r=i+1;
+    const rc=r===1?'rb-1':r===2?'rb-2':r===3?'rb-3':'rb-n';
+    body.innerHTML+=`<tr>
+      <td><span class="rb ${rc}">${r}</span></td>
+      <td class="td-name">${d.N}</td>
+      <td>${EM(d.C)} ${d.C}</td>
+      <td style="font-family:Orbitron,sans-serif;font-size:0.6rem;color:var(--cyan);letter-spacing:2px;">${d.T}</td>
+      <td class="td-goals">${d.G}</td>
+      <td>${d.A}</td>
+      <td>${d.S}</td>
+    </tr>`;
+  });
+  document.getElementById('tbl-count').textContent=`${f.length} REGISTROS`;
+}
+
+function goPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pg-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
