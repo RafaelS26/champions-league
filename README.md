@@ -2,7 +2,7 @@
 
 Dashboard interativo com dados dos maiores artilheiros da UEFA Champions League nas últimas 13 temporadas.
 
-## 🔗 [Acesse o Dashboard ao vivo](https://RafaelS26.github.io/champions-league-top-scorers/champions_dashboard_v2.html)
+## 🔗 [Acesse o Dashboard ao vivo](https://rafaels26.github.io/champions-league/)
 
 ---
 
